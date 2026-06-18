@@ -1,90 +1,80 @@
 <?php
-// Menyertakan file abstract class induk agar tidak error "Class not found"
+// Menyertakan file abstract class induk agar tidak error
 require_once 'Tiket.php';
 
 // =========================================================================
-// 1. SUBCLASS: TIKET REGULAR
+// 1. SUBCLASS: TIKET REGULAR (Overriding Tarif Standar Murni)
 // =========================================================================
 class TiketRegular extends Tiket {
-    // Properti tambahan spesifik (private untuk enkapsulasi)
     private $tipeAudio;
     private $lokasiBaris;
 
-    // Constructor Subclass
     public function __construct($data) {
-        // Meneruskan data global ke constructor abstract class Tiket
         parent::__construct($data);
-        
-        // Memetakan properti spesifik dari kolom database
         $this->tipeAudio   = $data['tipe_audio'] ?? 'Standard Audio';
         $this->lokasiBaris = $data['lokasi_baris'] ?? '-';
     }
 
-    // Mengimplementasikan metode abstrak hitungTotalHarga
+    /**
+     * OVERRIDING METODE hitungTotalHarga()
+     * Logika Bisnis: Total Harga = jumlah_kursi * hargaDasarTiket
+     */
     public function hitungTotalHarga() {
-        // Kelas Regular: Harga dasar dikali jumlah kursi (tanpa biaya tambahan)
-        return $this->hargaDasarTiket * $this->jumlah_kursi;
+        return $this->jumlah_kursi * $this->hargaDasarTiket;
     }
 
-    // Mengimplementasikan metode abstrak tampilkanInfoFasilitas
     public function tampilkanInfoFasilitas() {
         return "Studio: Regular | Audio: " . $this->tipeAudio . " | Baris: " . $this->lokasiBaris;
     }
 }
 
 // =========================================================================
-// 2. SUBCLASS: TIKET IMAX
+// 2. SUBCLASS: TIKET IMAX (Overriding dengan Flat Surcharge Rp35.000)
 // =========================================================================
 class TiketIMAX extends Tiket {
-    // Properti tambahan spesifik
     private $kacamata3dId;
     private $efekGerakFitur;
 
-    // Constructor Subclass
     public function __construct($data) {
         parent::__construct($data);
-        
         $this->kacamata3dId   = $data['kacamata_3d_id'] ?? 'Tidak Tersedia';
         $this->efekGerakFitur = $data['efek_gerak_fitur'] ?? 'Standard No-Motion';
     }
 
-    // Mengimplementasikan metode abstrak hitungTotalHarga
+    /**
+     * OVERRIDING METODE hitungTotalHarga()
+     * Logika Bisnis: Total Harga = (jumlah_kursi * hargaDasarTiket) + 35000
+     */
     public function hitungTotalHarga() {
-        // Kelas IMAX: Ada surcharge tambahan Rp 15.000 per kursi
-        $surchargeIMAX = 15000;
-        return ($this->hargaDasarTiket + $surchargeIMAX) * $this->jumlah_kursi;
+        return ($this->jumlah_kursi * $this->hargaDasarTiket) + 35000;
     }
 
-    // Mengimplementasikan metode abstrak tampilkanInfoFasilitas
     public function tampilkanInfoFasilitas() {
         return "Studio: IMAX | ID Kacamata 3D: " . $this->kacamata3dId . " | Efek Gerak: " . $this->efekGerakFitur;
     }
 }
 
 // =========================================================================
-// 3. SUBCLASS: TIKET VELVET
+// 3. SUBCLASS: TIKET VELVET (Overriding dengan Surcharge Premium 50%)
 // =========================================================================
 class TiketVelvet extends Tiket {
-    // Properti tambahan spesifik
     private $bantalSelimutPack;
     private $layananButler;
 
-    // Constructor Subclass
     public function __construct($data) {
         parent::__construct($data);
-        
         $this->bantalSelimutPack = $data['bantal_selimut_pack'] ?? 'Standard Pack';
         $this->layananButler     = $data['layanan_butler'] ?? 'Tidak Tersedia';
     }
 
-    // Mengimplementasikan metode abstrak hitungTotalHarga
+    /**
+     * OVERRIDING METODE hitungTotalHarga()
+     * Logika Bisnis: Total Harga = (jumlah_kursi * hargaDasarTiket) * 1.50
+     */
     public function hitungTotalHarga() {
-        // Kelas Velvet: Kelas VIP Suite, ada surcharge tambahan Rp 50.000 per kursi
-        $surchargeVelvet = 50000;
-        return ($this->hargaDasarTiket + $surchargeVelvet) * $this->jumlah_kursi;
+        return ($this->jumlah_kursi * $this->hargaDasarTiket) * 1.50;
     }
 
-    // Mengimplementasikan metode abstrak tampilkanInfoFasilitas
     public function tampilkanInfoFasilitas() {
         return "Studio: Velvet | Fasilitas Tidur: " . $this->bantalSelimutPack . " | Layanan Butler: " . $this->layananButler;
     }
